@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 class ResponseModel {
   ResponseModel({this.error, this.data, this.message});
 
