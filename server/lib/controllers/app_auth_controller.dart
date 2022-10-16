@@ -18,9 +18,9 @@ class AppAuthController extends ResourceController {
     return Response.ok(
       ResponseModel(
         data: {
-          'id': fetchedUser.id ?? "",
-          'refreshToken': fetchedUser.refreshToken ?? "",
-          'accessToken': fetchedUser.accessToken ?? "",
+          'id': fetchedUser.id,
+          'refreshToken': fetchedUser.refreshToken,
+          'accessToken': fetchedUser.accessToken,
         },
         message: 'Успешная авторизация!',
       ).toJson(),
@@ -39,9 +39,9 @@ class AppAuthController extends ResourceController {
     return Response.ok(
       ResponseModel(
         data: {
-          'id': fetchedUser.id ?? "",
-          'refreshToken': fetchedUser.refreshToken ?? "",
-          'accessToken': fetchedUser.accessToken ?? "",
+          'id': fetchedUser.id,
+          'refreshToken': fetchedUser.refreshToken,
+          'accessToken': fetchedUser.accessToken,
         },
         message: 'Успешная регистрация!',
       ).toJson(),
@@ -55,9 +55,9 @@ class AppAuthController extends ResourceController {
     return Response.ok(
       ResponseModel(
         data: {
-          'id': fetchedUser.id ?? "",
-          'refreshToken': fetchedUser.refreshToken ?? "",
-          'accessToken': fetchedUser.accessToken ?? "",
+          'id': fetchedUser.id,
+          'refreshToken': fetchedUser.refreshToken,
+          'accessToken': fetchedUser.accessToken,
         },
         message: 'Успешное обновление!',
       ).toJson(),
