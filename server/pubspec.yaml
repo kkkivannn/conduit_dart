@@ -8,6 +8,7 @@ environment:
 
 dependencies:
   conduit: ^3.0.0
+  jaguar_jwt: ^3.0.0
 
 dev_dependencies:
   test: ^1.16.5

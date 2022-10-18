@@ -26,6 +26,12 @@
       "languageVersion": "2.14"
     },
     {
+      "name": "auth_header",
+      "rootUri": "file:///home/kkkivannn/.pub-cache/hosted/pub.dartlang.org/auth_header-3.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "boolean_selector",
       "rootUri": "file:///home/kkkivannn/.pub-cache/hosted/pub.dartlang.org/boolean_selector-2.1.0",
       "packageUri": "lib/",
@@ -154,6 +160,12 @@
     {
       "name": "io",
       "rootUri": "file:///home/kkkivannn/.pub-cache/hosted/pub.dartlang.org/io-1.0.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "jaguar_jwt",
+      "rootUri": "file:///home/kkkivannn/.pub-cache/hosted/pub.dartlang.org/jaguar_jwt-3.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -398,7 +410,7 @@
       "languageVersion": "2.12"
     }
   ],
-  "generated": "2022-10-16T20:48:15.312395Z",
+  "generated": "2022-10-17T07:35:10.764407Z",
   "generator": "pub",
   "generatorVersion": "2.17.1"
 }
