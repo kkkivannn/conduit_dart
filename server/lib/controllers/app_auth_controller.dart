@@ -1,6 +1,7 @@
 import 'package:jaguar_jwt/jaguar_jwt.dart';
 import 'package:server/models/response_model.dart';
 import 'package:server/server.dart';
+import 'package:server/utils/app_response.dart';
 import 'package:server/utils/app_utils.dart';
 
 import '../models/user_data.dart';
@@ -35,18 +36,13 @@ class AppAuthController extends ResourceController {
 
         final newUser =
             await managedContext.fetchObjectWithID<User>(findUser.id);
-        return Response.ok(
-          ResponseModel(
-              data: newUser?.backing.contents,
-              message: "Успешная авторизация!"),
-        );
+        return AppResponse.ok(
+            body: newUser?.backing.contents, message: "Успешная авторизация!");
       } else {
         throw QueryException.conflict("Пароль не верный", []);
       }
-    } on QueryException catch (error) {
-      return Response.serverError(
-        body: ResponseModel(message: error.message),
-      );
+    } catch (error) {
+      return AppResponse.serverError(error, message: "Ошибка авторизации!");
     }
   }
 
@@ -74,14 +70,12 @@ class AppAuthController extends ResourceController {
         await _updateTokens(id, transaction);
       });
       final User? userData = await managedContext.fetchObjectWithID<User>(id);
-      return Response.ok(
-        ResponseModel(
-            data: userData?.backing.contents, message: "Успешная регистрация"),
+      return AppResponse.ok(
+        body: userData?.backing.contents,
+        message: "Успешная регистрация",
       );
-    } on QueryException catch (error) {
-      return Response.serverError(
-        body: ResponseModel(message: error.message),
-      );
+    } catch (error) {
+      return AppResponse.serverError(error, message: "Ошибка регистрация!");
     }
   }
 
@@ -99,17 +93,21 @@ class AppAuthController extends ResourceController {
       @Bind.path('refresh') String refreshToken) async {
     try {
       final id = AppUtils.getIdFromToken(refreshToken);
-      await _updateTokens(id, managedContext);
       final user = await await managedContext.fetchObjectWithID<User>(id);
-      return Response.ok(
-        ResponseModel(
-            data: user?.backing.contents,
-            message: "Успешной обновление токена!"),
-      );
+      if (user?.refreshToken != refreshToken) {
+        return Response.unauthorized(
+          body: ResponseModel(message: "Token is not valid!"),
+        );
+      } else {
+        await _updateTokens(id, managedContext);
+        return AppResponse.ok(
+          body: user?.backing.contents,
+          message: "Успешной обновление токена!",
+        );
+      }
     } catch (error) {
-      return Response.serverError(
-        body: ResponseModel(message: error.toString()),
-      );
+      return AppResponse.serverError(error,
+          message: "Ошибка обновления токена!");
     }
   }
 
