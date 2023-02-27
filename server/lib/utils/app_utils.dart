@@ -6,7 +6,7 @@ abstract class AppUtils {
   static int getIdFromToken(String token) {
     try {
       final key = Platform.environment['SECRET_KEY'];
-      final jwtClaim = verifyJwtHS256Signature(token, key ?? "");
+      final jwtClaim = verifyJwtHS256Signature(token, key ?? "SECRET_KEY");
       return int.parse(jwtClaim['id'].toString());
     } catch (_) {
       rethrow;
