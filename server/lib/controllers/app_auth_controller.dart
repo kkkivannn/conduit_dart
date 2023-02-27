@@ -1,9 +1,10 @@
+import 'dart:io';
+
+import 'package:conduit_core/conduit_core.dart';
 import 'package:jaguar_jwt/jaguar_jwt.dart';
 import 'package:server/models/response_model.dart';
-import 'package:server/server.dart';
-import 'package:server/utils/app_utils.dart';
-
 import '../models/user_data.dart';
+import '../utils/app_utils.dart';
 
 class AppAuthController extends ResourceController {
   AppAuthController(this.managedContext);
@@ -13,7 +14,7 @@ class AppAuthController extends ResourceController {
   Future<Response> signIn(@Bind.body() User user) async {
     if (user.password == null || user.username == null) {
       return Response.badRequest(
-        body: ResponseModel(message: "Поля Password и Username обязательны!"),
+        body: MyResponseModel(message: "Поля Password и Username обязательны!"),
       );
     }
     try {
@@ -28,7 +29,7 @@ class AppAuthController extends ResourceController {
       if (findUser == null) {
         throw QueryException.conflict("Пользователь не найден", []);
       }
-      final requestHashPassword = AuthUtility.generatePasswordHash(
+      final requestHashPassword = generatePasswordHash(
           user.password ?? '', findUser.salt ?? '');
       if (requestHashPassword == findUser.hashPassword) {
         await _updateTokens(findUser.id ?? -1, managedContext);
@@ -36,7 +37,7 @@ class AppAuthController extends ResourceController {
         final newUser =
             await managedContext.fetchObjectWithID<User>(findUser.id);
         return Response.ok(
-          ResponseModel(
+          MyResponseModel(
               data: newUser?.backing.contents,
               message: "Успешная авторизация!"),
         );
@@ -45,7 +46,7 @@ class AppAuthController extends ResourceController {
       }
     } on QueryException catch (error) {
       return Response.serverError(
-        body: ResponseModel(message: error.message),
+        body: MyResponseModel(message: error.message),
       );
     }
   }
@@ -54,13 +55,13 @@ class AppAuthController extends ResourceController {
   Future<Response> signUp(@Bind.body() User user) async {
     if (user.password == null || user.username == null || user.email == null) {
       return Response.badRequest(
-        body: ResponseModel(
+        body: MyResponseModel(
             message: "Поля Password и Username, и Email обязательны!"),
       );
     }
-    final salt = AuthUtility.generateRandomSalt();
+    final salt = generateRandomSalt();
     final hashPassword =
-        AuthUtility.generatePasswordHash(user.password ?? "", salt);
+        generatePasswordHash(user.password ?? "", salt);
     try {
       late final int id;
       await managedContext.transaction((transaction) async {
@@ -75,12 +76,12 @@ class AppAuthController extends ResourceController {
       });
       final User? userData = await managedContext.fetchObjectWithID<User>(id);
       return Response.ok(
-        ResponseModel(
+        MyResponseModel(
             data: userData?.backing.contents, message: "Успешная регистрация"),
       );
     } on QueryException catch (error) {
       return Response.serverError(
-        body: ResponseModel(message: error.message),
+        body: MyResponseModel(message: error.message),
       );
     }
   }
@@ -101,13 +102,13 @@ class AppAuthController extends ResourceController {
       final id = AppUtils.getIdFromToken(refreshToken);
     } catch (error) {
       return Response.serverError(
-        body: ResponseModel(message: error.toString()),
+        body: MyResponseModel(message: error.toString()),
       );
     }
 
     final User fetchedUser = User();
     return Response.ok(
-      ResponseModel(
+      MyResponseModel(
         data: {
           'id': fetchedUser.id,
           'refreshToken': fetchedUser.refreshToken,

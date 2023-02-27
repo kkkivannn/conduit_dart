@@ -1,4 +1,6 @@
-import 'package:conduit/conduit.dart';
+
+
+import 'package:conduit_core/conduit_core.dart';
 
 class User extends ManagedObject<_User> implements _User {}
 

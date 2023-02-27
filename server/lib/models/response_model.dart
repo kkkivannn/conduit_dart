@@ -1,5 +1,5 @@
-class ResponseModel {
-  ResponseModel({this.error, this.data, this.message});
+class MyResponseModel {
+  MyResponseModel({this.error, this.data, this.message});
 
   final dynamic error;
   final dynamic data;

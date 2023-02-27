@@ -1,3 +1,5 @@
+import 'package:conduit_core/conduit_core.dart';
+import 'package:conduit_postgresql/conduit_postgresql.dart';
 import 'package:server/controllers/app_auth_controller.dart';
 import 'package:server/server.dart';
 
@@ -19,7 +21,7 @@ class AppService extends ApplicationChannel {
     final username = Platform.environment["DB_USERNAME"] ?? "admin";
     final password = Platform.environment["DB_PASSWORD"] ?? "root";
     final host = Platform.environment["DB_HOST"] ?? "127.0.0.1";
-    final port = int.parse(Platform.environment["DB_POR"] ?? "5432");
+    final port = int.parse(Platform.environment["DB_POR"] ?? "5438");
     final databaseName = Platform.environment["DB_NAME"] ?? "postgres";
     return PostgreSQLPersistentStore(
       username,
