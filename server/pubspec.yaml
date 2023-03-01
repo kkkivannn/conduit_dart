@@ -1,10 +1,10 @@
 name: server
-description: An empty conduit application.
+description: AuthService
 version: 0.0.1
 publish_to: none
 
 environment:
-  sdk: '>=2.19.2 <3.0.0'
+  sdk: '>=2.18.0 <3.0.0'
 
 dependencies:
   conduit: ^4.3.2

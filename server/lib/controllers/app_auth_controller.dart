@@ -29,8 +29,8 @@ class AppAuthController extends ResourceController {
       if (findUser == null) {
         throw QueryException.conflict("Пользователь не найден", []);
       }
-      final requestHashPassword = generatePasswordHash(
-          user.password ?? '', findUser.salt ?? '');
+      final requestHashPassword =
+          generatePasswordHash(user.password ?? '', findUser.salt ?? '');
       if (requestHashPassword == findUser.hashPassword) {
         await _updateTokens(findUser.id ?? -1, managedContext);
 
@@ -60,17 +60,16 @@ class AppAuthController extends ResourceController {
       );
     }
     final salt = generateRandomSalt();
-    final hashPassword =
-        generatePasswordHash(user.password ?? "", salt);
+    final hashPassword = generatePasswordHash(user.password ?? "", salt);
     try {
       late final int id;
       await managedContext.transaction((transaction) async {
-        final qCreateUser = Query<User>(transaction)
+        final Query<User> qCreateUser = Query<User>(transaction)
           ..values.username = user.username
           ..values.email = user.email
           ..values.salt = salt
           ..values.hashPassword = hashPassword;
-        final createdUser = await qCreateUser.insert();
+        final User createdUser = await qCreateUser.insert();
         id = createdUser.asMap()["id"] as int;
         await _updateTokens(id, transaction);
       });
@@ -100,36 +99,31 @@ class AppAuthController extends ResourceController {
       @Bind.path('refresh') String refreshToken) async {
     try {
       final id = AppUtils.getIdFromToken(refreshToken);
+      await _updateTokens(id, managedContext);
+      final user = await managedContext.fetchObjectWithID<User>(id);
+      return Response.ok(
+        MyResponseModel(
+          data: user?.backing.contents,
+          message: 'Успешное обновление токенов',
+        ),
+      );
     } catch (error) {
       return Response.serverError(
         body: MyResponseModel(message: error.toString()),
       );
     }
-
-    final User fetchedUser = User();
-    return Response.ok(
-      MyResponseModel(
-        data: {
-          'id': fetchedUser.id,
-          'refreshToken': fetchedUser.refreshToken,
-          'accessToken': fetchedUser.accessToken,
-        },
-        message: 'Успешное обновление!',
-      ).toJson(),
-    );
   }
 
   Map<String, dynamic> _getTokens(id) {
-    //TODO remove when release
-    final key = Platform.environment['SECRET_KEY'] ?? 'SECRET_KEY';
-    final accessClaimSet = JwtClaim(
+    final String key = Platform.environment['SECRET_KEY'] ?? 'SECRET_KEY';
+    final JwtClaim accessClaimSet = JwtClaim(
       maxAge: const Duration(hours: 1),
       otherClaims: {"id": id},
     );
     final refreshClaimSet = JwtClaim(
       otherClaims: {"id": id},
     );
-    final tokens = <String, dynamic>{};
+    final Map<String, dynamic> tokens = <String, dynamic>{};
     tokens["access"] = issueJwtHS256(accessClaimSet, key);
     tokens["refresh"] = issueJwtHS256(refreshClaimSet, key);
     return tokens;
